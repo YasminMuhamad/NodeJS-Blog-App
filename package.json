@@ -1,0 +1,33 @@
+{
+  "name": "nodejs-blog-app",
+  "version": "1.0.0",
+  "description": "A group project built with **Node.js + Express + Firebase** following the **MVC pattern**.   It’s a mini social application where users can register, create posts, comment, and manage their profiles.   Includes authentication, roles (user/admin), and image uploads.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YasminMuhamad/NodeJS-Blog-App.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/YasminMuhamad/NodeJS-Blog-App/issues"
+  },
+  "homepage": "https://github.com/YasminMuhamad/NodeJS-Blog-App#readme",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "firebase-admin": "^13.5.0",
+    "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^7.0.6"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
