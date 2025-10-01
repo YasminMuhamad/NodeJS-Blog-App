@@ -9,10 +9,14 @@ const verifyToken = (req, res, next) => {
 
   const token = authHeader.split(" ")[1];
 
-  jwt.verify(token, "test", (err, decoded) => {
-    if (err) return res.status(403).send("Invalid token");
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) return res.status(401).send("Invalid Token");
 
-    req.myToken = decoded;
+    if (!decoded.id || !decoded.role) {
+      return res.status(401).send("Invalid Token Data");
+    }
+
+    req.user = decoded; // id + role
     next();
   });
 };
