@@ -21,8 +21,9 @@
   "homepage": "https://github.com/YasminMuhamad/NodeJS-Blog-App#readme",
   "dependencies": {
     "bcrypt": "^6.0.0",
-    "dotenv": "^17.2.2",
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "firebase": "^12.3.0",
     "firebase-admin": "^13.5.0",
     "jsonwebtoken": "^9.0.2",
     "nodemailer": "^7.0.6"

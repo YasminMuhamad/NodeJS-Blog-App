@@ -1,65 +1,76 @@
-import postCollection from "../Database/mpostModel.js";
-import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
-import { db } from "../dbConnection.js";
+import postCollection from "../../database/models/postModel.js";
+import db from "../../database/dbConnection.js";
 
 // Create Post
 export const createNewPost = async (req, res) => {
-  const { title, content, imageUrl } = req.body;
-  const creator = req.myToken.id; // جاي من التوكن
-  const createdAt = new Date().toISOString();
+  try {
+    const { title, content, imageUrl } = req.body;
+    const creator = req.user.id;
+    const createdAt = new Date().toISOString();
 
-  const newPost = await postCollection.add({ title, content, imageUrl, creator, createdAt });
-  res.status(201).json({ msg: "Post Created", newPost });
+    const newPostRef = await postCollection.add({ title, content, imageUrl, creator, createdAt });
+    res.status(201).json({ msg: "Post Created", id: newPostRef.id });
+  } catch (err) {
+    console.error("Error creating post:", err);
+    res.status(500).send("Internal Server Error");
+  }
 };
 
-//  Get All Posts
+// Get All Posts
 export const getAllPosts = async (req, res) => {
-  const snapshot = await postCollection.get();
-  const posts = [];
-  snapshot.forEach(doc => posts.push({ id: doc.id, ...doc.data() }));
-  res.status(200).send(posts);
+  try {
+    const snapshot = await postCollection.get();
+    const posts = [];
+    snapshot.forEach((doc) => posts.push({ id: doc.id, ...doc.data() }));
+    res.status(200).send(posts);
+  } catch (err) {
+    console.error("Error fetching posts:", err);
+    res.status(500).send("Internal Server Error");
+  }
 };
 
 // Update Post (Authorization logic)
 export const updatePost = async (req, res) => {
   try {
-    const postRef = doc(db, "posts", req.params.id);
-    const postSnap = await getDoc(postRef);
+    const postRef = db.collection("posts").doc(req.params.id);
+    const postSnap = await postRef.get();
 
-    if (!postSnap.exists()) return res.status(404).send("Post not found");
+    if (!postSnap.exists) return res.status(404).send("Post not found");
 
     const postData = postSnap.data();
 
     // Authorization check
-    if (req.myToken.role !== "admin" && postData.creator !== req.myToken.id) {
+    if (req.user.role !== "admin" && postData.creator !== req.user.id) {
       return res.status(403).send("Not allowed to update this post");
     }
 
-    await updateDoc(postRef, req.body);
+    await postRef.update(req.body);
     res.status(200).send("Post Updated");
   } catch (err) {
-    res.status(500).send(err.message);
+    console.error("Error updating post:", err);
+    res.status(500).send("Internal Server Error");
   }
 };
 
-//  Delete Post (Authorization logic)
+// Delete Post (Authorization logic)
 export const deletePost = async (req, res) => {
   try {
-    const postRef = doc(db, "posts", req.params.id);
-    const postSnap = await getDoc(postRef);
+    const postRef = db.collection("posts").doc(req.params.id);
+    const postSnap = await postRef.get();
 
-    if (!postSnap.exists()) return res.status(404).send("Post not found");
+    if (!postSnap.exists) return res.status(404).send("Post not found");
 
     const postData = postSnap.data();
 
     // Authorization check
-    if (req.myToken.role !== "admin" && postData.creator !== req.myToken.id) {
+    if (req.user.role !== "admin" && postData.creator !== req.user.id) {
       return res.status(403).send("Not allowed to delete this post");
     }
 
-    await deleteDoc(postRef);
+    await postRef.delete();
     res.status(200).send("Post Deleted");
   } catch (err) {
-    res.status(500).send(err.message);
+    console.error("Error deleting post:", err);
+    res.status(500).send("Internal Server Error");
   }
 };
