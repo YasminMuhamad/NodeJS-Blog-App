@@ -15,21 +15,54 @@ export const register = async (req, res) => {
     }
 }
 
+// userController.js - login function
 export const login = async (req, res) => {
-    try {
-        const { password } = req.body;
-        const user = req.userFromDB;
+  try {
+    const { email, password } = req.body;
+    const user = req.userFromDB;
 
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) return res.status(401).send('Invalid email or password');
+    console.log('🔑 Login attempt for email:', email);
+    console.log('👤 User from DB:', user);
 
-        const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
-        res.status(200).send({ message: 'Login successful', token });
-    } catch (error) {
-        console.error('Error logging in user:', error);
-        res.status(500).send('Internal Server Error');
+    if (!user) {
+      return res.status(401).send('User not found');
     }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      console.log('❌ Invalid password for user:', user.id);
+      return res.status(401).send('Invalid email or password');
+    }
+
+    // تأكد من وجود الـ id
+    if (!user.id) {
+      console.log('❌ User ID is missing in user object');
+      return res.status(500).send('User data is invalid');
+    }
+
+    // Token payload
+    const tokenPayload = { 
+      id: user.id, 
+      role: user.role || 'user'
+    };
+    
+    console.log('🎫 Creating token with payload:', tokenPayload);
+    
+    // أنشئ الـ token بدون expiration مؤقتاً علشان نتأكد
+    const token = jwt.sign(tokenPayload, "super_secret_key");
+    
+    console.log('🔑 Generated token:', token);
+    console.log('🔑 Token length:', token.length);
+    
+    res.status(200).json({ 
+      message: 'Login successful', 
+      token,
+      user: { id: user.id, role: user.role }
+    });
+  } catch (error) {
+    console.error('Error logging in user:', error);
+    res.status(500).send('Internal Server Error');
+  }
 };
 
 export const getProfile = async (req, res) => {
