@@ -7,7 +7,7 @@ const router = express.Router();
 // Create Post
 router.post("/posts",verifyToken, createNewPost);
 
-// Get All Posts
+// Get  Posts
 router.get("/posts", verifyToken, getAllPosts);
 
 // Update Post

@@ -4,10 +4,8 @@ import commentCollection from "../../database/models/commentModel.js";
 // Create Comment
 const createComment = async (req, res) => {
   try {
-    console.log('👤 User in comment creation:', req.user);
     
     const { postId, content } = req.body;
-    // استخدم req.user.id بدل req.user.userId
     const userId = req.user.id;
 
     if (!postId || !content) {
@@ -23,7 +21,6 @@ const createComment = async (req, res) => {
 
     res.status(201).json({ msg: "Comment Created", id: newComment.id });
   } catch (error) {
-    console.error('Error creating comment:', error);
     res.status(500).send('Internal Server Error');
   }
 };
@@ -41,7 +38,6 @@ const getComments = async (req, res) => {
 
     res.status(200).json(comments);
   } catch (error) {
-    console.error('Error getting comments:', error);
     res.status(500).send('Internal Server Error');
   }
 };
@@ -51,7 +47,7 @@ const updateComment = async (req, res) => {
   try {
     const { id } = req.params;
     const { content } = req.body;
-    // استخدم req.user.id بدل req.user.userId
+
     const userId = req.user.id;
     const role = req.user.role;
 
@@ -66,7 +62,6 @@ const updateComment = async (req, res) => {
     await commentCollection.doc(id).update({ content, updatedAt: new Date() });
     res.status(200).send("Comment Updated");
   } catch (error) {
-    console.error('Error updating comment:', error);
     res.status(500).send('Internal Server Error');
   }
 };
@@ -75,7 +70,7 @@ const updateComment = async (req, res) => {
 const deleteComment = async (req, res) => {
   try {
     const { id } = req.params;
-    // استخدم req.user.id بدل req.user.userId
+  
     const userId = req.user.id;
     const role = req.user.role;
 
@@ -90,7 +85,6 @@ const deleteComment = async (req, res) => {
     await commentCollection.doc(id).delete();
     res.status(200).send("Comment Deleted");
   } catch (error) {
-    console.error('Error deleting comment:', error);
     res.status(500).send('Internal Server Error');
   }
 };

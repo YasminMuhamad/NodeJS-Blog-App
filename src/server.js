@@ -1,4 +1,4 @@
-import 'dotenv/config'; // Reads .env file and sets environment variables
+import 'dotenv/config';
 import app from './app.js';
 
 const PORT = 5000;

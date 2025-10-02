@@ -10,7 +10,6 @@ export const register = async (req, res) => {
         await usersCollection.add({ name, email, password, role: 'user' });
         res.status(201).send('User Signed Up');
     } catch (error) {
-        console.error('Error signing up user:', error);
         res.status(500).send('Internal Server Error');
     }
 }
@@ -21,8 +20,6 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
     const user = req.userFromDB;
 
-    console.log('🔑 Login attempt for email:', email);
-    console.log('👤 User from DB:', user);
 
     if (!user) {
       return res.status(401).send('User not found');
@@ -30,13 +27,10 @@ export const login = async (req, res) => {
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      console.log('❌ Invalid password for user:', user.id);
       return res.status(401).send('Invalid email or password');
     }
 
-    // تأكد من وجود الـ id
     if (!user.id) {
-      console.log('❌ User ID is missing in user object');
       return res.status(500).send('User data is invalid');
     }
 
@@ -46,13 +40,9 @@ export const login = async (req, res) => {
       role: user.role || 'user'
     };
     
-    console.log('🎫 Creating token with payload:', tokenPayload);
     
-    // أنشئ الـ token بدون expiration مؤقتاً علشان نتأكد
+
     const token = jwt.sign(tokenPayload, "super_secret_key");
-    
-    console.log('🔑 Generated token:', token);
-    console.log('🔑 Token length:', token.length);
     
     res.status(200).json({ 
       message: 'Login successful', 
@@ -60,7 +50,6 @@ export const login = async (req, res) => {
       user: { id: user.id, role: user.role }
     });
   } catch (error) {
-    console.error('Error logging in user:', error);
     res.status(500).send('Internal Server Error');
   }
 };
@@ -78,7 +67,6 @@ export const getProfile = async (req, res) => {
         const userData = userDoc.data();
         res.status(200).send({ name: userData.name, email: userData.email, role: userData.role, profilePicture: userData.profilePicture || null });
     } catch (error) {
-        console.error('Error fetching user profile:', error);
         res.status(500).send('Internal Server Error');
     }
 }
@@ -99,7 +87,6 @@ export const updateProfile = async (req, res) => {
         await usersCollection.doc(userId).update(updateData);
         res.status(200).send('Profile updated successfully');
     } catch (error) {
-        console.error('Error updating user profile:', error);
         res.status(500).send('Internal Server Error');
     }
 }
@@ -117,7 +104,6 @@ export const deleteUser = async (req, res) => {
         await usersCollection.doc(userId).delete();
         res.status(200).send('User Deleted');
     } catch (error) {
-        console.error('Error fetching user profile:', error);
         res.status(500).send('Internal Server Error');
     }
 }
