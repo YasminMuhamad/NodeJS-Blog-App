@@ -1,14 +1,14 @@
-import postCollection from "../Database/mpostModel.js";
+import postCollection from "../../database/models/postModel.js";
 import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
-import { db } from "../dbConnection.js";
+import  db  from "../../database/dbConnection.js";
 
 // Create Post
 export const createNewPost = async (req, res) => {
   const { title, content, imageUrl } = req.body;
-  const creator = req.myToken.id; // جاي من التوكن
+ const creator = req.user.id;
   const createdAt = new Date().toISOString();
 
-  const newPost = await postCollection.add({ title, content, imageUrl, creator, createdAt });
+  const newPost = await postCollection.add({ title, content, imageUrl,  creator, createdAt });
   res.status(201).json({ msg: "Post Created", newPost });
 };
 
@@ -31,7 +31,7 @@ export const updatePost = async (req, res) => {
     const postData = postSnap.data();
 
     // Authorization check
-    if (req.myToken.role !== "admin" && postData.creator !== req.myToken.id) {
+    if (req.user.role !== "admin" && postData.creator !== req.user.id) {
       return res.status(403).send("Not allowed to update this post");
     }
 
@@ -53,7 +53,7 @@ export const deletePost = async (req, res) => {
     const postData = postSnap.data();
 
     // Authorization check
-    if (req.myToken.role !== "admin" && postData.creator !== req.myToken.id) {
+    if (req.user.role !== "admin" && postData.creator !== req.user.id) {
       return res.status(403).send("Not allowed to delete this post");
     }
 

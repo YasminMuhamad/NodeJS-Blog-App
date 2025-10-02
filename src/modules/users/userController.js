@@ -6,7 +6,7 @@ export const register = async (req, res) => {
     try {
         let { name, email, password } = req.body;
         let hashedPassword = await bcrypt.hash(password, 10);
-        password = hashedPassword;
+        password = hashedPassword;  
         await usersCollection.add({ name, email, password, role: 'user' });
         res.status(201).send('User Signed Up');
     } catch (error) {

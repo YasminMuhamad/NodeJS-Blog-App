@@ -10,8 +10,8 @@ const app = express();
 app.use(express.json());
 
 // Register Routers
-app.use('/api/users', userRouter);
-app.use('/api/posts', postRouter);
+app.use( userRouter);
+app.use( postRouter);
 // app.use('/api/comments', commentRouter);
 
 app.get('/', (req, res) => {
