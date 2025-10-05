@@ -7,7 +7,7 @@ export const register = async (req, res) => {
         let { name, email, password } = req.body;
         let hashedPassword = await bcrypt.hash(password, 10);
         password = hashedPassword;
-        await usersCollection.add({ name, email, password, role: 'user' });
+        await usersCollection.add({ name, email, password, role: 'user', emailVerified: false });
         res.status(201).send('User Signed Up');
     } catch (error) {
         console.error('Error signing up user:', error);
@@ -88,3 +88,51 @@ export const deleteUser = async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 }
+
+// export default uploadPicture = async (req, res) {
+
+// }
+
+// import { supabase } from '../../database/dbConnection.js';
+// export const uploadProfilePicture = async (req, res) => {
+//     try {
+//         if (!req.file) return res.status(400).send('No file uploaded');
+
+//         const userId = req.user.id;
+//         const fileBuffer = req.file.buffer;
+//         const fileName = `${userId}_${Date.now()}.jpg`; // اسم الملف فريد
+
+//         // رفع الملف على bucket "avatars"
+//         const { data, error } = await supabase
+//             .storage
+//             .from('avatars')
+//             .upload(fileName, fileBuffer, {
+//                 cacheControl: '3600',
+//                 upsert: true,
+//                 contentType: req.file.mimetype
+//             });
+
+//         if (error) throw error;
+
+//         // الحصول على public URL
+//         const { publicUrl, error: urlError } = supabase
+//             .storage
+//             .from('avatars')
+//             .getPublicUrl(fileName);
+
+//         if (urlError) throw urlError;
+
+//         // تحديث بيانات المستخدم في الـ database
+//         await usersCollection.doc(userId).update({ profilePicture: publicUrl });
+
+//         res.status(200).send({ message: 'Profile picture uploaded', url: publicUrl });
+//     } catch (error) {
+//         console.error('Error uploading profile picture:', error);
+//         if (error.status) {
+//             res.status(error.status).send(error.message);
+//         } else {
+//             res.status(500).send('Internal Server Error');
+//         }
+//     }
+
+// };
