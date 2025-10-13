@@ -14,7 +14,6 @@ export const createNewPost = async (req, res) => {
     const createdAt = new Date().toISOString();
 
     const newPostRef = await postCollection.add({
-      title,
       content,
       imageUrl,
       creator,
