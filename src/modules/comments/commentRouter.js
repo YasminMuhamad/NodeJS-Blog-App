@@ -1,4 +1,3 @@
-// Routes/commentRoutes.js
 import { Router } from "express";
 import { createComment, getComments, updateComment, deleteComment } from "./commentController.js";
 import verifyToken from "../../middlewares/verifyToken.js";

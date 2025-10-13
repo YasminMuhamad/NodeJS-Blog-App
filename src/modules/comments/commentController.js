@@ -1,4 +1,3 @@
-// Controllers/commentController.js
 import commentCollection from "../../database/models/commentModel.js";
 
 // Create Comment
